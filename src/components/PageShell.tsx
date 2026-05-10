@@ -8,31 +8,36 @@ interface Props {
 
 export default function PageShell({ title, action, children }: Props) {
   return (
-    <div style={{ minHeight: '100dvh', paddingBottom: 80 }}>
-      {/* Header */}
+    <div style={{ minHeight: '100dvh', paddingBottom: 96, position: 'relative', zIndex: 1 }}>
       <header style={{
         position: 'sticky',
         top: 0,
-        background: 'rgba(15,15,15,0.9)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid #2c2c2e',
-        padding: '14px 18px',
+        background: 'rgba(0,0,0,0.7)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        padding: '16px 20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 50,
-        paddingTop: 'calc(14px + env(safe-area-inset-top))',
+        paddingTop: 'calc(16px + env(safe-area-inset-top))',
       }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px' }}>{title}</h1>
+        <h1 style={{
+          fontSize: 22,
+          fontWeight: 700,
+          letterSpacing: '-0.5px',
+          background: 'linear-gradient(135deg, #f1f1f3 0%, #a0a0b0 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}>
+          {title}
+        </h1>
         {action}
       </header>
-
-      {/* Content */}
-      <main style={{ padding: '0 0 16px' }}>
+      <main style={{ padding: '0 0 16px', position: 'relative', zIndex: 1 }}>
         {children}
       </main>
-
       <BottomNav />
     </div>
   )

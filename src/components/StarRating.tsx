@@ -11,7 +11,7 @@ interface Props {
 
 export default function StarRating({ value, onChange, readonly = false, size = 22 }: Props) {
   return (
-    <div style={{ display: 'flex', gap: 4 }}>
+    <div style={{ display: 'flex', gap: 3 }}>
       {[1, 2, 3, 4, 5].map(n => (
         <button
           key={n}
@@ -22,12 +22,25 @@ export default function StarRating({ value, onChange, readonly = false, size = 2
             border: 'none',
             padding: 2,
             cursor: readonly ? 'default' : 'pointer',
+            transition: 'transform 0.15s cubic-bezier(0.34,1.56,0.64,1)',
+          }}
+          onMouseDown={e => {
+            if (!readonly) (e.currentTarget as HTMLElement).style.transform = 'scale(1.3)'
+          }}
+          onMouseUp={e => {
+            (e.currentTarget as HTMLElement).style.transform = 'scale(1)'
+          }}
+          onTouchStart={e => {
+            if (!readonly) (e.currentTarget as HTMLElement).style.transform = 'scale(1.3)'
+          }}
+          onTouchEnd={e => {
+            (e.currentTarget as HTMLElement).style.transform = 'scale(1)'
           }}
         >
           <Star
             size={size}
-            fill={n <= value ? '#ffd60a' : 'none'}
-            color={n <= value ? '#ffd60a' : '#3a3a3c'}
+            fill={n <= value ? '#fbbf24' : 'none'}
+            color={n <= value ? '#fbbf24' : 'rgba(255,255,255,0.15)'}
             strokeWidth={1.5}
           />
         </button>

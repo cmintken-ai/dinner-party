@@ -1,16 +1,25 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #0f0f0f;
-  --fg: #f5f5f5;
-  --card: #1c1c1e;
-  --card-border: #2c2c2e;
-  --accent: #e85d26;
-  --accent-hover: #d14e1a;
-  --muted: #8e8e93;
-  --success: #30d158;
-  --warning: #ffd60a;
-  --error: #ff453a;
+  --bg: #000000;
+  --bg-elevated: #0a0a0a;
+  --fg: #f1f1f3;
+  --fg-secondary: #a0a0b0;
+  --card: rgba(255,255,255,0.04);
+  --card-border: rgba(255,255,255,0.08);
+  --card-hover: rgba(255,255,255,0.07);
+  --accent: #818cf8;
+  --accent-dim: rgba(129,140,248,0.15);
+  --accent-glow: rgba(129,140,248,0.25);
+  --muted: #6b6b80;
+  --success: #34d399;
+  --success-dim: rgba(52,211,153,0.12);
+  --warning: #fbbf24;
+  --error: #f87171;
+  --error-dim: rgba(248,113,113,0.12);
+  --glass: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.07);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,32 +27,87 @@
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   max-width: 480px;
   margin: 0 auto;
   min-height: 100dvh;
   overscroll-behavior: none;
 }
 
+/* Glass card base */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Pill badge */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--fg-secondary);
+}
+
 input, textarea, select {
-  background: #2c2c2e;
+  background: rgba(255,255,255,0.05);
   color: var(--fg);
-  border: 1px solid #3a3a3c;
-  border-radius: 10px;
-  padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 13px 16px;
   font-size: 16px;
+  font-family: 'Inter', sans-serif;
   width: 100%;
   outline: none;
   -webkit-appearance: none;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
   border-color: var(--accent);
+  background: rgba(129,140,248,0.06);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--muted);
+}
+
+select option {
+  background: #1a1a2e;
+  color: var(--fg);
 }
 
 button {
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'Inter', sans-serif;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Glow effect for accent elements */
+.accent-glow {
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* Subtle page gradient */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 480px;
+  height: 300px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(129,140,248,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }

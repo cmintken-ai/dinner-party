@@ -15,30 +15,36 @@ export default function ThumbRating({ value, onChange, readonly = false }: Props
   }
 
   return (
-    <div style={{ display: 'flex', gap: 12 }}>
+    <div style={{ display: 'flex', gap: 10 }}>
       <button type="button" onClick={() => toggle('up')} style={{
-        background: value === 'up' ? 'rgba(48,209,88,0.15)' : 'transparent',
-        border: `1.5px solid ${value === 'up' ? '#30d158' : '#3a3a3c'}`,
-        borderRadius: 10,
-        padding: '8px 18px',
-        color: value === 'up' ? '#30d158' : '#8e8e93',
-        display: 'flex', alignItems: 'center', gap: 6,
-        fontSize: 14, fontWeight: 500,
-        transition: 'all 0.15s',
+        flex: 1,
+        background: value === 'up' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${value === 'up' ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.08)'}`,
+        borderRadius: 12,
+        padding: '10px 16px',
+        color: value === 'up' ? '#34d399' : 'rgba(255,255,255,0.3)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+        fontSize: 13, fontWeight: 500,
+        transition: 'all 0.2s',
+        cursor: readonly ? 'default' : 'pointer',
       }}>
-        <ThumbsUp size={18} /> Would go back
+        <ThumbsUp size={16} strokeWidth={value === 'up' ? 2.2 : 1.8} />
+        Would go back
       </button>
       <button type="button" onClick={() => toggle('down')} style={{
-        background: value === 'down' ? 'rgba(255,69,58,0.15)' : 'transparent',
-        border: `1.5px solid ${value === 'down' ? '#ff453a' : '#3a3a3c'}`,
-        borderRadius: 10,
-        padding: '8px 18px',
-        color: value === 'down' ? '#ff453a' : '#8e8e93',
-        display: 'flex', alignItems: 'center', gap: 6,
-        fontSize: 14, fontWeight: 500,
-        transition: 'all 0.15s',
+        flex: 1,
+        background: value === 'down' ? 'rgba(248,113,113,0.12)' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${value === 'down' ? 'rgba(248,113,113,0.4)' : 'rgba(255,255,255,0.08)'}`,
+        borderRadius: 12,
+        padding: '10px 16px',
+        color: value === 'down' ? '#f87171' : 'rgba(255,255,255,0.3)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+        fontSize: 13, fontWeight: 500,
+        transition: 'all 0.2s',
+        cursor: readonly ? 'default' : 'pointer',
       }}>
-        <ThumbsDown size={18} /> Pass
+        <ThumbsDown size={16} strokeWidth={value === 'down' ? 2.2 : 1.8} />
+        Pass
       </button>
     </div>
   )

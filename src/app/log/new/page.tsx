@@ -9,18 +9,16 @@ import { ArrowLeft, Plus, X } from 'lucide-react'
 import Link from 'next/link'
 
 const SEATTLE_NEIGHBORHOODS = [
-  'Capitol Hill', 'Ballard', 'Fremont', 'Queen Anne', 'South Lake Union',
-  'Pioneer Square', 'Belltown', 'First Hill', 'Madison Park', 'Madrona',
-  'Columbia City', 'West Seattle', 'Georgetown', 'Eastlake', 'Wallingford',
-  'Green Lake', 'Phinney Ridge', 'Ravenna', 'University District', 'Montlake',
+  'Capitol Hill','Ballard','Fremont','Queen Anne','South Lake Union',
+  'Pioneer Square','Belltown','First Hill','Madison Park','Madrona',
+  'Columbia City','West Seattle','Georgetown','Eastlake','Wallingford',
+  'Green Lake','Phinney Ridge','Ravenna','University District','Montlake',
 ]
-
-const SNOHOMISH_AREAS = ['Edmonds', 'Everett', 'Mukilteo', 'Snohomish', 'Bothell', 'Kenmore', 'Mill Creek']
-
+const SNOHOMISH_AREAS = ['Edmonds','Everett','Mukilteo','Snohomish','Bothell','Kenmore','Mill Creek']
 const CUISINES = [
-  'American', 'Italian', 'Japanese', 'Mexican', 'Thai', 'Chinese', 'Korean',
-  'French', 'Mediterranean', 'Indian', 'Vietnamese', 'Spanish', 'Seafood',
-  'Steakhouse', 'Pizza', 'Sushi', 'Ramen', 'Cocktail Bar', 'Wine Bar', 'Other',
+  'American','Italian','Japanese','Mexican','Thai','Chinese','Korean',
+  'French','Mediterranean','Indian','Vietnamese','Spanish','Seafood',
+  'Steakhouse','Pizza','Sushi','Ramen','Cocktail Bar','Wine Bar','Other',
 ]
 
 interface DishEntry { name: string; rating: number }
@@ -48,7 +46,6 @@ export default function NewDinnerPage() {
   function updateDish(i: number, field: keyof DishEntry, val: string | number) {
     setDishes(d => d.map((x, idx) => idx === i ? { ...x, [field]: val } : x))
   }
-
   function addCocktail() { setCocktails(c => [...c, { name: '', rating: 0 }]) }
   function removeCocktail(i: number) { setCocktails(c => c.filter((_, idx) => idx !== i)) }
   function updateCocktail(i: number, field: keyof DishEntry, val: string | number) {
@@ -67,28 +64,22 @@ export default function NewDinnerPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/login'); return }
 
-    // Upsert restaurant
     const { data: restaurant, error: rErr } = await supabase
       .from('restaurants')
       .upsert({ name: restaurantName, neighborhood, cuisine, area, added_by: user.id }, { onConflict: 'name' })
-      .select()
-      .single()
+      .select().single()
 
     if (rErr || !restaurant) { setError('Could not save restaurant.'); setLoading(false); return }
 
-    // Create dinner
     const { data: dinner, error: dErr } = await supabase
       .from('dinners')
       .insert({ restaurant_id: restaurant.id, date, thumb, notes, added_by: user.id })
-      .select()
-      .single()
+      .select().single()
 
     if (dErr || !dinner) { setError('Could not save dinner.'); setLoading(false); return }
 
-    // Add self as attendee
     await supabase.from('dinner_attendees').insert({ dinner_id: dinner.id, user_id: user.id })
 
-    // Save dishes
     const validDishes = dishes.filter(d => d.name.trim())
     if (validDishes.length) {
       await supabase.from('dishes').insert(
@@ -96,7 +87,6 @@ export default function NewDinnerPage() {
       )
     }
 
-    // Save cocktails
     const validCocktails = cocktails.filter(c => c.name.trim())
     if (validCocktails.length) {
       await supabase.from('cocktails').insert(
@@ -108,49 +98,44 @@ export default function NewDinnerPage() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', paddingBottom: 40 }}>
+    <div style={{ minHeight: '100dvh', paddingBottom: 40, position: 'relative', zIndex: 1 }}>
       <header style={{
         position: 'sticky', top: 0,
-        background: 'rgba(15,15,15,0.9)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid #2c2c2e',
-        padding: '14px 18px',
-        display: 'flex', alignItems: 'center', gap: 12,
+        background: 'rgba(0,0,0,0.7)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        padding: '16px 20px',
+        display: 'flex', alignItems: 'center', gap: 14,
         zIndex: 50,
-        paddingTop: 'calc(14px + env(safe-area-inset-top))',
+        paddingTop: 'calc(16px + env(safe-area-inset-top))',
       }}>
-        <Link href="/log" style={{ color: 'var(--accent)', display: 'flex' }}>
-          <ArrowLeft size={22} />
+        <Link href="/log" style={{ color: 'var(--accent)', display: 'flex', padding: 4 }}>
+          <ArrowLeft size={20} />
         </Link>
-        <h1 style={{ fontSize: 18, fontWeight: 700 }}>Log a Dinner</h1>
+        <h1 style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px' }}>Log a Dinner</h1>
       </header>
 
-      <form onSubmit={handleSubmit} style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <form onSubmit={handleSubmit} style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 28 }}>
 
-        {/* Restaurant */}
         <section>
           <label style={labelStyle}>Restaurant</label>
-          <input
-            placeholder="Restaurant name"
-            value={restaurantName}
-            onChange={e => setRestaurantName(e.target.value)}
-            required
-          />
+          <input placeholder="Restaurant name" value={restaurantName}
+            onChange={e => setRestaurantName(e.target.value)} required />
         </section>
 
-        {/* Area toggle */}
         <section>
           <label style={labelStyle}>Area</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {(['seattle', 'snohomish'] as const).map(a => (
-              <button key={a} type="button" onClick={() => { setArea(a); setNeighborhood('') }}
+              <button key={a} type="button"
+                onClick={() => { setArea(a); setNeighborhood('') }}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: 10,
-                  border: `1.5px solid ${area === a ? 'var(--accent)' : '#3a3a3c'}`,
-                  background: area === a ? 'rgba(232,93,38,0.12)' : 'transparent',
+                  flex: 1, padding: '11px', borderRadius: 12,
+                  border: `1px solid ${area === a ? 'rgba(129,140,248,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                  background: area === a ? 'rgba(129,140,248,0.1)' : 'rgba(255,255,255,0.03)',
                   color: area === a ? 'var(--accent)' : 'var(--muted)',
-                  fontWeight: 600, fontSize: 14, textTransform: 'capitalize',
+                  fontWeight: 600, fontSize: 14, transition: 'all 0.2s',
                 }}>
                 {a === 'seattle' ? 'Seattle' : 'Snohomish Co.'}
               </button>
@@ -158,7 +143,6 @@ export default function NewDinnerPage() {
           </div>
         </section>
 
-        {/* Neighborhood */}
         <section>
           <label style={labelStyle}>Neighborhood</label>
           <select value={neighborhood} onChange={e => setNeighborhood(e.target.value)} required>
@@ -167,7 +151,6 @@ export default function NewDinnerPage() {
           </select>
         </section>
 
-        {/* Cuisine */}
         <section>
           <label style={labelStyle}>Cuisine</label>
           <select value={cuisine} onChange={e => setCuisine(e.target.value)} required>
@@ -176,13 +159,11 @@ export default function NewDinnerPage() {
           </select>
         </section>
 
-        {/* Date */}
         <section>
           <label style={labelStyle}>Date</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)} />
         </section>
 
-        {/* Overall verdict */}
         <section>
           <label style={labelStyle}>Would you go back?</label>
           <ThumbRating value={thumb} onChange={setThumb} />
@@ -190,27 +171,28 @@ export default function NewDinnerPage() {
 
         {/* Dishes */}
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
             <label style={labelStyle}>Dishes</label>
             <button type="button" onClick={addDish} style={addBtnStyle}>
-              <Plus size={14} /> Add dish
+              <Plus size={13} strokeWidth={2.5} /> Add dish
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {dishes.map((dish, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <div style={{ flex: 1 }}>
-                  <input
-                    placeholder={`Dish ${i + 1}`}
-                    value={dish.name}
-                    onChange={e => updateDish(i, 'name', e.target.value)}
-                  />
-                </div>
-                <StarRating value={dish.rating} onChange={v => updateDish(i, 'rating', v)} size={20} />
+              <div key={i} style={{
+                display: 'flex', gap: 10, alignItems: 'center',
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 12, padding: '10px 12px',
+              }}>
+                <input placeholder={`Dish ${i + 1}`} value={dish.name}
+                  onChange={e => updateDish(i, 'name', e.target.value)}
+                  style={{ flex: 1, background: 'none', border: 'none', padding: '0', fontSize: 15 }} />
+                <StarRating value={dish.rating} onChange={v => updateDish(i, 'rating', v)} size={19} />
                 {dishes.length > 1 && (
                   <button type="button" onClick={() => removeDish(i)}
-                    style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 4 }}>
-                    <X size={16} />
+                    style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 2, flexShrink: 0 }}>
+                    <X size={15} />
                   </button>
                 )}
               </div>
@@ -220,27 +202,30 @@ export default function NewDinnerPage() {
 
         {/* Cocktails */}
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <label style={labelStyle}>Cocktails <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional)</span></label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+            <label style={labelStyle}>
+              Cocktails <span style={{ color: 'var(--muted)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>optional</span>
+            </label>
             <button type="button" onClick={addCocktail} style={addBtnStyle}>
-              <Plus size={14} /> Add
+              <Plus size={13} strokeWidth={2.5} /> Add
             </button>
           </div>
           {cocktails.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {cocktails.map((c, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <div style={{ flex: 1 }}>
-                    <input
-                      placeholder={`Cocktail ${i + 1}`}
-                      value={c.name}
-                      onChange={e => updateCocktail(i, 'name', e.target.value)}
-                    />
-                  </div>
-                  <StarRating value={c.rating} onChange={v => updateCocktail(i, 'rating', v)} size={20} />
+                <div key={i} style={{
+                  display: 'flex', gap: 10, alignItems: 'center',
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 12, padding: '10px 12px',
+                }}>
+                  <input placeholder={`Cocktail ${i + 1}`} value={c.name}
+                    onChange={e => updateCocktail(i, 'name', e.target.value)}
+                    style={{ flex: 1, background: 'none', border: 'none', padding: '0', fontSize: 15 }} />
+                  <StarRating value={c.rating} onChange={v => updateCocktail(i, 'rating', v)} size={19} />
                   <button type="button" onClick={() => removeCocktail(i)}
-                    style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 4 }}>
-                    <X size={16} />
+                    style={{ background: 'none', border: 'none', color: 'var(--muted)', padding: 2, flexShrink: 0 }}>
+                    <X size={15} />
                   </button>
                 </div>
               ))}
@@ -248,25 +233,31 @@ export default function NewDinnerPage() {
           )}
         </section>
 
-        {/* Notes */}
         <section>
-          <label style={labelStyle}>Notes <span style={{ color: 'var(--muted)', fontWeight: 400 }}>(optional)</span></label>
-          <textarea
-            placeholder="Any memorable moments, must-orders, or things to skip..."
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-            rows={3}
-            style={{ resize: 'none' }}
-          />
+          <label style={labelStyle}>
+            Notes <span style={{ color: 'var(--muted)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>optional</span>
+          </label>
+          <textarea placeholder="Memorable moments, must-orders, things to skip..."
+            value={notes} onChange={e => setNotes(e.target.value)}
+            rows={3} style={{ resize: 'none' }} />
         </section>
 
-        {error && <p style={{ color: 'var(--error)', fontSize: 14 }}>{error}</p>}
+        {error && (
+          <div style={{
+            background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)',
+            borderRadius: 10, padding: '10px 14px', color: '#f87171', fontSize: 13,
+          }}>
+            {error}
+          </div>
+        )}
 
         <button type="submit" disabled={loading} style={{
-          background: 'var(--accent)', color: 'white',
-          border: 'none', borderRadius: 12,
+          background: 'linear-gradient(135deg, #818cf8, #6366f1)',
+          color: 'white', border: 'none', borderRadius: 14,
           padding: '15px', fontSize: 16, fontWeight: 700,
           opacity: loading ? 0.6 : 1,
+          boxShadow: '0 4px 20px rgba(129,140,248,0.3)',
+          transition: 'opacity 0.2s',
         }}>
           {loading ? 'Saving...' : 'Save Dinner'}
         </button>
@@ -276,14 +267,15 @@ export default function NewDinnerPage() {
 }
 
 const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 13, fontWeight: 600,
+  display: 'block', fontSize: 11, fontWeight: 600,
   color: 'var(--muted)', textTransform: 'uppercase',
-  letterSpacing: '0.5px', marginBottom: 8,
+  letterSpacing: '0.8px', marginBottom: 10,
 }
 
 const addBtnStyle: React.CSSProperties = {
-  background: 'none', border: '1.5px solid #3a3a3c',
-  borderRadius: 8, padding: '5px 10px',
-  color: 'var(--muted)', fontSize: 13,
+  background: 'rgba(129,140,248,0.1)',
+  border: '1px solid rgba(129,140,248,0.2)',
+  borderRadius: 8, padding: '5px 12px',
+  color: 'var(--accent)', fontSize: 12, fontWeight: 600,
   display: 'flex', alignItems: 'center', gap: 4,
 }
